@@ -75,6 +75,7 @@ const initialViewport = {
   height: 0,
   latitude: 37.76,
   longitude: -122.44,
+  altitude: 1000,
   pitch: 0,
   width: 0,
   zoom: 11,
@@ -986,6 +987,12 @@ export default class Example extends React.Component<
         blendEquation: GL.FUNC_ADD,
         blendFunc: [GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA],
       },
+
+      editPlane: {
+        center: [this.state.viewport.longitude, this.state.viewport.latitude],
+        elevation: this.state.viewport.altitude,
+        radius: 0.01
+      }
     });
 
     const layers = [editableGeoJsonLayer];

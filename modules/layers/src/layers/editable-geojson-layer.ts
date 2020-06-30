@@ -1,6 +1,6 @@
 /* eslint-env browser */
 
-import { GeoJsonLayer, ScatterplotLayer, IconLayer, TextLayer } from '@deck.gl/layers';
+import { GeoJsonLayer, ScatterplotLayer, IconLayer, TextLayer, PolygonLayer } from '@deck.gl/layers';
 
 import {
   ViewMode,
@@ -249,8 +249,7 @@ export default class EditableGeoJsonLayer extends EditableLayer {
 
     let layers: any = [new GeoJsonLayer(subLayerProps)];
 
-    layers = layers.concat(this.createGuidesLayers(), this.createTooltipsLayers());
-
+    layers = layers.concat(this.createGuidesLayers(), this.createTooltipsLayers(), this.createEditPlaneLayer());
     return layers;
   }
 
@@ -442,6 +441,36 @@ export default class EditableGeoJsonLayer extends EditableLayer {
     );
 
     return [layer];
+  }
+
+  createEditPlaneLayer() {
+    let center: number[] = this.props.editPlane.center;
+    let h: number = this.props.editPlane.elevation;
+
+    h -= 0.01;
+
+    let radius: number = this.props.editPlane.radius;
+    let vertex: number[][][] = [[
+      [center[0]-radius, center[1]-radius, h],
+      [center[0]-radius, center[1]+radius, h],
+      [center[0]+radius, center[1]+radius, h],
+      [center[0]+radius, center[1]-radius, h],
+      [center[0]-radius, center[1]-radius, h],
+    ]]
+
+    const layer = new PolygonLayer({
+      id: 'polygon-layer',
+      data: vertex,
+      extruded: false,
+      pickable: false,
+      stroked: false,
+      filled: true,
+      wireframe: true,
+      getPolygon: (f: number[][])=>(f),
+      getFillColor: [99, 203, 224, 50],
+    });
+
+    return layer;
   }
 
   onLayerClick(event: ClickEvent) {

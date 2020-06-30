@@ -101,7 +101,7 @@ export default class EditableLayer extends CompositeLayer<any> {
 
   _onanyclick({ srcEvent }: any) {
     const screenCoords = this.getScreenCoords(srcEvent);
-    const mapCoords = this.getMapCoords(screenCoords);
+    const mapCoords = this.getElevatedPlaneCoords(screenCoords);
     // @ts-ignore
     const picks = this.getPicks(screenCoords);
 
@@ -120,7 +120,7 @@ export default class EditableLayer extends CompositeLayer<any> {
 
   _onpanstart(event: any) {
     const screenCoords = this.getScreenCoords(event.srcEvent);
-    const mapCoords = this.getMapCoords(screenCoords);
+    const mapCoords = this.getElevatedPlaneCoords(screenCoords);
     // @ts-ignore
     const picks = this.getPicks(screenCoords);
 
@@ -150,7 +150,7 @@ export default class EditableLayer extends CompositeLayer<any> {
   _onpanmove(event: any) {
     const { srcEvent } = event;
     const screenCoords = this.getScreenCoords(srcEvent);
-    const mapCoords = this.getMapCoords(screenCoords);
+    const mapCoords = this.getElevatedPlaneCoords(screenCoords);
 
     const {
       pointerDownPicks,
@@ -180,7 +180,7 @@ export default class EditableLayer extends CompositeLayer<any> {
 
   _onpanend({ srcEvent }: any) {
     const screenCoords = this.getScreenCoords(srcEvent);
-    const mapCoords = this.getMapCoords(screenCoords);
+    const mapCoords = this.getElevatedPlaneCoords(screenCoords);
 
     const {
       pointerDownPicks,
@@ -214,7 +214,7 @@ export default class EditableLayer extends CompositeLayer<any> {
   _onpointermove(event: any) {
     const { srcEvent } = event;
     const screenCoords = this.getScreenCoords(srcEvent);
-    const mapCoords = this.getMapCoords(screenCoords);
+    const mapCoords = this.getElevatedPlaneCoords(screenCoords);
 
     const {
       pointerDownPicks,
@@ -259,5 +259,10 @@ export default class EditableLayer extends CompositeLayer<any> {
   getMapCoords(screenCoords: number[]) {
     // @ts-ignore
     return this.context.viewport.unproject([screenCoords[0], screenCoords[1]]);
+  }
+
+  getElevatedPlaneCoords(screenCoords: number[]) {
+    // @ts-ignore
+    return this.context.viewport.unproject([screenCoords[0], screenCoords[1]], {targetZ: this.context.viewport.altitude});
   }
 }
